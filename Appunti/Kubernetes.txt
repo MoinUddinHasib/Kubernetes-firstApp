@@ -1,0 +1,42 @@
+Cosa è kubernetes?
+Kubernates è un sistema che fa girare diversi container in macchine differenti, cioè permette di scegliere in maniera diversa per ogni macchina i tipi e i numeri dei continer che devono girare.
+In ogni macchina però, devono girare conteiner che hanno tra di loro strette relazioni.
+
+Kubernetes quindi è un sistema di deploy di applicazioni che si trovano all'interno dei conteiner. 
+Esistono due tipologie di deploy:
+	- Imperative deployment: decido esattamente quali sono gli step da fare per ottenere i conteiner dell'applicazione.
+	- Declarative deployment: lascio decidere al master quali sono gli step da fare per ottenere i conteiner dell'applicazione.
+
+Quando non si ha necessita di utilizzare kubernetes?
+Non si usa kubernetes quando si vuole far girare in ogni macchina sempre lo stesso insieme di conteiner.
+
+Un cluster di kubernetes è formato da un master ed da uno o più nodi:
+-Il master cè una macchina che ha un insieme di comandi per gestire ogni nodo.
+-Un nodo è una macchina virtuale o un computer fisico che fa girare dei container.
+----------------------------------------------------------------------------------------------------------------------
+Kubernetes ha bisgono di immagini già esistenti.
+kubectl: CLI per interagire con il master.
+----------------------------------------------------------------------------------------------------------------------
+In kubernetes config files
+kind: pod //purpose: running containers
+kind: service //purpose: setting up networking
+kind: deployment //purpose: running a set of identical pods
+----------------------------------------------------------------------------------------------------------------------
+kubectl apply -f <percorso-config-file> #fornisce un file(deployment.yaml) di configurazione al master tramite kubectl per creare i conteiner
+kubectl get <nome-obj> #stampa tutti i obj (pods, service, deployment, pv, ingress) esistenti
+kubectl describe <obj-type> <obj-name> #recupera informazioni di un object; obj-name è opzionale
+kubectl delete -f <percorso-config-file> #cancella un obj prendendo come input il suo file di configurazione
+kubectl set image <obj-type>/<obj-name> <container-name>=<new-tag-img> #setta manualmente la nuova img ad un container
+kubectl logs <nome-obj> #stampa i log di quel obj
+kubectl create secret generic <secret-name> --from=literal <key>=<value> #salva in memoria sicura un (chiave, valore)
+----------------------------------------------------------------------------------------------------------------------
+Services serve per collegamenti in entrata ma non in uscita porte:
+port #porta di entrata degli altri pod apparteneti allo stesso node
+targetPort #porta che collega il pod protagonista
+nodePort #porta usata nel browser
+----------------------------------------------------------------------------------------------------------------------
+#Ingress controller
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml
+
+kubectl get pods -n ingress-nginx

@@ -1,0 +1,48 @@
+docker run <img name> <comand>	#crea e esegue un container + parametro opzionale ("sh"-> shell)che sovrascrivere il startup command dell'img [create + start]
+docker ps #lista di container in esecuzione
+docker system prune #cancella container
+docker logs <id-container> #tutti i log di quel container
+docker stop <id-container> #ferma il processo del container
+docker kill <id-container> #chiusura brusca
+docker exec -it <id-container> <command:settare a sh> #esecuzione di un comando in più nel container con -it flag che permette di dargli altri input
+docker build -t hasib96/<nomeTag> . #nel contesto dove c'è anche il file di nome "Dockerfile" per costrurire img; hasib96/nomeTag è il tag di img
+docker run -p 8080:8080 * <img-name>  #mapping porta *parametri //mette un mark alla cartella -v <percorso-cartella> //referenzia tutte(sovrascrivendo tranne le mark) le cartelle dentro pwd in app -> -v $(pwd):/app
+docker-compose up #equi -> docker run myimage ed avvia tutti i container -d flag per avviarli in backgroud
+docker-compose up --build #equi -> docker build . + docker run myimage
+docker-compose down #stoppa tutti i conteiner
+docker-compose ps #lista del gruppo di conteiner
+docker build -f Dockerfile.dev . #builda un img tramite il Dockerfile.dev, si usa solo per Dockerfile.dev
+docker attach <id-container> #collega l'input del nostro terminale con il processo primario del container
+docker push hasib96/<nomeTag> #pusha un'immagine su docker hub
+--------------------------------------------------------------------------------------------------------------------------------------------
+Dockerfile #si aggiunge .dev se sono in develop altrimenti sono in produzione; cream img
+FROM node:alpine
+WORKDIR /usr/app
+COPY ./ ./			#sorgente destinazione (stiamo dentro app)
+RUN npm install			#installa le dipendenze
+CMD ["npm","start"]		#comando: npm start
+--------------------------------------------------------------------------------------------------------------------------------------------
+docker-compose.yml		#serve ad automatizzare dei comandi e collegare più container, attenzione all'indentazione
+version: '3'
+services:
+	redis-server:
+		img: 'redis'
+	node-app:
+		restart: always
+		build: .	#cerca il Dockerfile nella cartella attuale
+			# context: . //da dove prendere i file per creare l'immagine
+			# dockerfile: Dockerfile.dev //quale è il dockerfile
+		ports:
+			- "8080:8080"
+		volumes:
+			- <percorso-cartella>
+			- .:/app
+	tests:
+		build: 
+			context: .
+			dockerfile: Dockerfile.dev
+		volumes:
+			- <percorso-cartella>
+			- .:/app
+		command: ["npm", "run", "test"]
+	
